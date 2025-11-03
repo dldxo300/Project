@@ -23,25 +23,25 @@
 
 ### Phase 2: 주문제작 기능 (2주)
 #### 2.1 주문제작 의뢰 페이지
-- [ ] 주문제작 의뢰 페이지 UI 구현 (`app/custom-order/page.tsx`)
-  - [ ] 2D 이미지 업로드 컴포넌트 (Supabase Storage 연동)
-  - [ ] 주문서 양식 폼 (react-hook-form + Zod)
-    - [ ] 피규어 사이즈 선택
-    - [ ] 추가 요구사항 텍스트 입력
-    - [ ] 참고 이미지 추가 업로드 (선택)
-  - [ ] 주문서 제출 기능
-- [ ] Server Action: 주문제작 의뢰 생성 (`actions/custom-order.ts`)
-  - [ ] 이미지 업로드 및 URL 저장
-  - [ ] `custom_orders` 테이블에 데이터 삽입
-  - [ ] 상태: `pending_review`로 초기화
-- [ ] 주문 접수 확인 페이지 구현
+- [x] 주문제작 의뢰 페이지 UI 구현 (`app/custom-order/page.tsx`)
+  - [x] 2D 이미지 업로드 컴포넌트 (Supabase Storage 연동)
+  - [x] 주문서 양식 폼 (react-hook-form + Zod)
+    - [x] 피규어 사이즈 선택
+    - [x] 추가 요구사항 텍스트 입력
+    - [x] 참고 이미지 추가 업로드 (선택)
+  - [x] 주문서 제출 기능
+- [x] Server Action: 주문제작 의뢰 생성 (`actions/custom-order.ts`)
+  - [x] 이미지 업로드 및 URL 저장
+  - [x] `custom_orders` 테이블에 데이터 삽입
+  - [x] 상태: `pending_review`로 초기화
+- [x] 주문 접수 확인 페이지 구현
 
 #### 2.2 나의 주문제작 내역
-- [ ] 주문제작 내역 목록 페이지 (`app/my-custom-orders/page.tsx`)
-  - [ ] 내 주문 목록 조회 (clerk_id 기반)
-  - [ ] 주문 상태별 필터링 (pending_review, quote_provided, in_progress, completed, shipped, delivered, cancelled)
-  - [ ] 주문서 상세보기 모달/페이지
-- [ ] Server Action: 주문 취소 기능 (상태가 `pending_review`일 때만)
+- [x] 주문제작 내역 목록 페이지 (`app/my-custom-orders/page.tsx`)
+  - [x] 내 주문 목록 조회 (clerk_id 기반)
+  - [x] 주문 상태별 필터링 (pending_review, quote_provided, in_progress, completed, shipped, delivered, cancelled)
+  - [x] 주문서 상세보기 모달/페이지
+- [x] Server Action: 주문 취소 기능 (상태가 `pending_review` 또는 `quote_provided`일 때)
 
 ### Phase 3: 관리자 - 주문제작 관리 (1.5주)
 - [ ] 관리자 인증 미들웨어 구현

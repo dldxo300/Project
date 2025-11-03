@@ -16,6 +16,16 @@ const Navbar = () => {
           </SignInButton>
         </SignedOut>
         <SignedIn>
+          <Link href="/custom-order">
+            <Button variant="outline" size="sm">
+              주문제작
+            </Button>
+          </Link>
+          <Link href="/my-custom-orders">
+            <Button variant="outline" size="sm">
+              나의 주문제작
+            </Button>
+          </Link>
           <UserButton />
         </SignedIn>
       </div>

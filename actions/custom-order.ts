@@ -4,6 +4,8 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { createClerkSupabaseClient } from "@/lib/supabase/server";
 import { auth } from "@clerk/nextjs/server";
+import type { CustomOrder, CustomOrderStatus, CustomOrderWithSignedUrls } from "@/types/custom-order";
+import { CANCELLABLE_STATUSES } from "@/types/custom-order";
 
 /**
  * @file actions/custom-order.ts
@@ -12,6 +14,7 @@ import { auth } from "@clerk/nextjs/server";
  * - FormData를 받아 Supabase Storage에 이미지 업로드
  * - `public.custom_orders`에 레코드 생성
  * - 생성된 의뢰 ID로 확인 페이지로 리다이렉트
+ * - 주문 목록 조회, 상세 조회, 취소 기능
  */
 
 const MAX_FILE_SIZE_BYTES = 6 * 1024 * 1024; // 6MB (setup_storage.sql 정책과 일치)
@@ -150,6 +153,174 @@ export async function createCustomOrder(formData: FormData): Promise<never> {
   console.log("redirect ->", `/custom-order/${newId}/confirmation`);
   console.groupEnd();
   redirect(`/custom-order/${newId}/confirmation`);
+}
+
+/**
+ * 내 주문제작 목록 조회
+ * @param status 상태 필터 (선택)
+ */
+export async function getMyCustomOrders(
+  status?: CustomOrderStatus | "all"
+): Promise<CustomOrder[]> {
+  console.group("custom-orders:list");
+  console.log("filter-status:", status ?? "all");
+
+  const { userId } = await auth();
+  if (!userId) {
+    console.log("not-authenticated");
+    console.groupEnd();
+    return [];
+  }
+
+  const supabase = createClerkSupabaseClient();
+
+  let query = supabase
+    .from("custom_orders")
+    .select("*")
+    .eq("clerk_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (status && status !== "all") {
+    query = query.eq("status", status);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.log("query-error", error);
+    console.groupEnd();
+    return [];
+  }
+
+  console.log("result-count:", data?.length ?? 0);
+  console.groupEnd();
+  return (data as CustomOrder[]) ?? [];
+}
+
+/**
+ * 주문제작 상세 조회 (Storage 서명 URL 포함)
+ * @param orderId 주문 ID
+ */
+export async function getCustomOrderById(
+  orderId: string
+): Promise<CustomOrderWithSignedUrls | null> {
+  console.group("custom-orders:detail");
+  console.log("order-id:", orderId);
+
+  const { userId } = await auth();
+  if (!userId) {
+    console.log("not-authenticated");
+    console.groupEnd();
+    return null;
+  }
+
+  const supabase = createClerkSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("custom_orders")
+    .select("*")
+    .eq("id", orderId)
+    .eq("clerk_id", userId)
+    .single();
+
+  if (error || !data) {
+    console.log("query-error", error);
+    console.groupEnd();
+    return null;
+  }
+
+  const order = data as CustomOrder;
+
+  // Storage 서명 URL 생성 (10분)
+  const signedMain = await supabase.storage
+    .from("uploads")
+    .createSignedUrl(order.source_image_url, 600);
+
+  const refUrls: string[] = Array.isArray(order.reference_image_urls)
+    ? order.reference_image_urls
+    : [];
+
+  const signedRefs = await Promise.all(
+    refUrls.map((path) =>
+      supabase.storage.from("uploads").createSignedUrl(path, 600)
+    )
+  );
+
+  const result: CustomOrderWithSignedUrls = {
+    ...order,
+    source_image_signed_url: signedMain.data?.signedUrl ?? null,
+    reference_signed_urls: signedRefs
+      .map((r) => r.data?.signedUrl)
+      .filter((url): url is string => !!url),
+  };
+
+  console.log("order-status:", order.status);
+  console.groupEnd();
+  return result;
+}
+
+/**
+ * 주문제작 취소
+ * @param orderId 주문 ID
+ * @returns 성공 여부 및 실패 이유
+ */
+export async function cancelCustomOrder(
+  orderId: string
+): Promise<{ ok: boolean; reason?: string }> {
+  console.group("custom-orders:cancel");
+  console.log("order-id:", orderId);
+
+  const { userId } = await auth();
+  if (!userId) {
+    console.log("not-authenticated");
+    console.groupEnd();
+    return { ok: false, reason: "인증이 필요합니다." };
+  }
+
+  const supabase = createClerkSupabaseClient();
+
+  // 1. 주문 조회 및 권한 확인
+  const { data: order, error: fetchError } = await supabase
+    .from("custom_orders")
+    .select("id, status")
+    .eq("id", orderId)
+    .eq("clerk_id", userId)
+    .single();
+
+  if (fetchError || !order) {
+    console.log("fetch-error", fetchError);
+    console.groupEnd();
+    return { ok: false, reason: "주문을 찾을 수 없습니다." };
+  }
+
+  const currentStatus = order.status as CustomOrderStatus;
+  console.log("current-status:", currentStatus);
+
+  // 2. 취소 가능 상태 확인
+  if (!CANCELLABLE_STATUSES.includes(currentStatus)) {
+    console.log("not-cancellable-status");
+    console.groupEnd();
+    return {
+      ok: false,
+      reason: "이 상태에서는 취소할 수 없습니다. (검토 대기 또는 견적 제공 상태에서만 가능)",
+    };
+  }
+
+  // 3. 상태 업데이트
+  const { error: updateError } = await supabase
+    .from("custom_orders")
+    .update({ status: "cancelled" })
+    .eq("id", orderId);
+
+  if (updateError) {
+    console.log("update-error", updateError);
+    console.groupEnd();
+    return { ok: false, reason: "취소 처리 중 오류가 발생했습니다." };
+  }
+
+  console.log("cancelled: status changed from", currentStatus, "to cancelled");
+  console.groupEnd();
+  return { ok: true };
 }
 
 
