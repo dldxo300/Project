@@ -15,7 +15,7 @@ import { SignedOut, SignInButton, SignedIn, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { LuSparkles } from "react-icons/lu";
 
 const Navbar = () => {
   return (
@@ -23,7 +23,7 @@ const Navbar = () => {
       <div className="flex justify-between items-center p-4 gap-4 h-16 max-w-7xl mx-auto">
         {/* 브랜드 로고 */}
         <Link href="/" className="flex items-center gap-2 text-xl font-bold hover:opacity-80 transition-opacity">
-          <Sparkles className="w-6 h-6 text-primary" />
+          <LuSparkles className="w-6 h-6 text-primary" />
           <span className="hidden sm:inline">나만의 피규어</span>
           <span className="sm:hidden">피규어</span>
         </Link>
@@ -57,7 +57,7 @@ const Navbar = () => {
             </Link> */}
             <Link href="/custom-order">
               <Button variant="default" size="sm" className="hidden md:flex">
-                <Sparkles className="w-4 h-4 mr-1" />
+                <LuSparkles className="w-4 h-4 mr-1" />
                 주문제작
               </Button>
               <Button variant="default" size="sm" className="md:hidden">

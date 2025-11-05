@@ -18,7 +18,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { LuSparkles, LuArrowRight } from "react-icons/lu";
 import { getLatestProducts, getAllCategories, getProductsByCategory } from "@/actions/product";
 import { ProductCard } from "@/components/product-card";
 import { CategorySection } from "@/components/category-section";
@@ -66,7 +66,7 @@ export default async function Home() {
             {/* 아이콘 */}
             <div className="flex justify-center">
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 text-primary">
-                <Sparkles className="w-10 h-10" />
+                <LuSparkles className="w-10 h-10" />
               </div>
             </div>
 
@@ -86,14 +86,14 @@ export default async function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
               <Link href="/custom-order">
                 <Button size="lg" className="text-lg px-8 py-6 h-auto">
-                  <Sparkles className="w-5 h-5 mr-2" />
+                  <LuSparkles className="w-5 h-5 mr-2" />
                   주문제작 시작하기
                 </Button>
               </Link>
               <Link href="#latest-products">
                 <Button size="lg" variant="outline" className="text-lg px-8 py-6 h-auto">
                   작품 둘러보기
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  <LuArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
             </div>
@@ -200,7 +200,7 @@ export default async function Home() {
           </p>
           <Link href="/custom-order">
             <Button size="lg" className="text-lg px-10 py-7 h-auto">
-              <Sparkles className="w-5 h-5 mr-2" />
+              <LuSparkles className="w-5 h-5 mr-2" />
               지금 바로 시작하기
             </Button>
           </Link>

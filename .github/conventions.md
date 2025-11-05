@@ -277,11 +277,12 @@ test("Page", () => {
 - 컴포넌트 사용 전 설치 여부를 확인해야 합니다: `/component/ui` 디렉토리 체크
 - 컴포넌트 설치 명령어를 사용해야 합니다: `pnpx shadcn@latest add [component-name]`
 
-### lucide-react
+### react-icons
 
-- 모든 아이콘은 lucide-react를 사용해야 합니다.
-- 아이콘 임포트 방법: `import { IconName } from 'lucide-react';`
-- 예시: `import { Menu, X } from 'lucide-react';`
+- 모든 아이콘은 react-icons를 사용해야 합니다.
+- 일반 아이콘은 `react-icons/lu` (Lucide 스타일) 사용
+- 아이콘 임포트 방법: `import { LuIconName } from 'react-icons/lu';`
+- 예시: `import { LuMenu, LuX } from 'react-icons/lu';`
 
 ### Jotai
 

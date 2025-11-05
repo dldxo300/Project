@@ -2,6 +2,16 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Overview
+
+**AI Figure & Miniature Marketplace (wonjunnim)** - 사용자가 2D 이미지를 업로드하면 AI로 3D 모델을 생성하고, 3D 프린팅 및 도색을 거쳐 피규어를 제작하는 주문제작 플랫폼입니다. 완성된 피규어는 마켓플레이스에서 재판매할 수 있습니다.
+
+**핵심 기능**:
+- 주문제작 (Custom Orders): 사용자가 이미지 업로드 → 관리자 견적 제공 → 제작 진행
+- 마켓플레이스: 완성된 피규어 판매 (카테고리별 분류, 장바구니, 주문)
+- 관리자 페이지: 주문제작 관리, 제품 등록
+- 리뷰 & Q&A: 구매 후기 및 상품 문의
+
 ## Tech Stack
 
 - **Next.js 15.5.6** with React 19 and App Router
@@ -9,7 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Database**: Supabase (PostgreSQL)
 - **Styling**: Tailwind CSS v4 (uses `globals.css`, no config file)
 - **UI Components**: shadcn/ui (based on Radix UI)
-- **Icons**: lucide-react
+- **Icons**: react-icons (lucide 스타일은 react-icons/lu 사용)
 - **Forms**: react-hook-form + Zod
 - **Package Manager**: pnpm
 - **Language**: TypeScript (strict typing required)
@@ -163,7 +173,9 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 
 1. **shadcn/ui 설치 확인**: 사용 전 `/components/ui/` 디렉토리 체크
 2. **설치 명령어**: `pnpx shadcn@latest add [component-name]`
-3. **아이콘**: lucide-react 사용 (`import { Icon } from 'lucide-react'`)
+3. **아이콘**: react-icons 사용 (`import { LuIcon } from 'react-icons/lu'`)
+   - 일반 아이콘: `react-icons/lu` (Lucide 스타일)
+   - 필요시 다른 아이콘 팩 사용 가능 (fa, md, io 등)
 
 ### Styling
 

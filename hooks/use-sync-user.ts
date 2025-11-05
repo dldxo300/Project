@@ -22,7 +22,7 @@ import { useEffect, useRef } from "react";
  * ```
  */
 export function useSyncUser() {
-  const { isLoaded, userId, getToken } = useAuth();
+  const { isLoaded, userId } = useAuth();
   const syncedRef = useRef(false);
 
   useEffect(() => {
@@ -52,24 +52,13 @@ export function useSyncUser() {
     const syncUser = async () => {
       console.log("🚀 Starting user sync...");
       try {
-        const token = await getToken().catch((error) => {
-          console.error("❌ Failed to retrieve Clerk token:", error);
-          return null;
-        });
-
-        console.log("🔑 Clerk token status:", token ? `${token.slice(0, 10)}…` : "null");
-
-        if (!token) {
-          console.error("❌ No token returned from Clerk, aborting sync");
-          return;
-        }
-
+        // Clerk는 쿠키로 세션을 관리하므로 credentials: "include"만 필요
+        // Authorization header는 불필요 (공식 문서 권장 방식)
         const response = await fetch("/api/sync-user", {
           method: "POST",
-          credentials: "include", // 쿠키 포함
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -88,5 +77,5 @@ export function useSyncUser() {
     };
 
     syncUser();
-  }, [getToken, isLoaded, userId]);
+  }, [isLoaded, userId]);
 }

@@ -20,7 +20,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { LuChevronDown, LuChevronUp } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
 import type { Category, ProductWithCategory } from "@/types/product";
@@ -89,9 +89,9 @@ export function CategorySection({
         >
           <span>{isExpanded ? "접기" : "더보기"}</span>
           {isExpanded ? (
-            <ChevronUp className="w-4 h-4" />
+            <LuChevronUp className="w-4 h-4" />
           ) : (
-            <ChevronDown className="w-4 h-4" />
+            <LuChevronDown className="w-4 h-4" />
           )}
         </Button>
       </div>
